@@ -6,10 +6,10 @@ from langchain_core.messages import BaseMessage
 
 class GroceryAgentState(TypedDict):
     """
-    Session 3 State Schema:
-    Adds iteration bounding and execution fingerprints to prevent runaway loops.
+    Session 5 State Schema:
+    Adds system_summary for long-context compression and message pruning.
     """
-    # Messages list with append reducer
+    # Messages list with append reducer (also processes RemoveMessage)
     messages: Annotated[List[BaseMessage], operator.add]
     
     # Customer and session identifiers
@@ -23,9 +23,12 @@ class GroceryAgentState(TypedDict):
     # Trace notes
     internal_notes: Annotated[List[str], operator.add]
     
-    # Session 3: Circuit breaker & Loop detection guards
+    # Circuit breaker & loop detection guards
     iteration_count: int
     tool_call_fingerprints: Annotated[List[str], operator.add]
+    
+    # Session 5: Rolling context summarization
+    system_summary: Optional[str]
     
     # Final response delivered to the customer
     final_response: Optional[str]
