@@ -6,22 +6,26 @@ from langchain_core.messages import BaseMessage
 
 class GroceryAgentState(TypedDict):
     """
-    Session 1 State Blueprint:
-    Defines the blackboard memory shared across all nodes in the graph.
+    Session 3 State Schema:
+    Adds iteration bounding and execution fingerprints to prevent runaway loops.
     """
-    # Messages list uses operator.add so new messages append rather than overwrite
+    # Messages list with append reducer
     messages: Annotated[List[BaseMessage], operator.add]
     
     # Customer and session identifiers
     customer_id: str
     thread_id: str
     
-    # Triage classification output
-    ticket_category: Optional[str]  # "delivery", "quality_refund", "fraud", "general"
-    urgency_level: Optional[str]    # "low", "medium", "high", "critical"
+    # Triage classification
+    ticket_category: Optional[str]
+    urgency_level: Optional[str]
     
-    # Trace notes for debugging
+    # Trace notes
     internal_notes: Annotated[List[str], operator.add]
+    
+    # Session 3: Circuit breaker & Loop detection guards
+    iteration_count: int
+    tool_call_fingerprints: Annotated[List[str], operator.add]
     
     # Final response delivered to the customer
     final_response: Optional[str]
